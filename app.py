@@ -5,6 +5,9 @@ import joblib
 import numpy as np
 from fastapi import Depends
 from sqlalchemy.orm import Session
+from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from database import SessionLocal, engine
 import models
 
@@ -25,6 +28,13 @@ feature_names = joblib.load("feature_names.pkl")
 
 # Initialize FastAPI app
 app = FastAPI()
+
+# Serve frontend files
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/")
+async def read_index():
+    return FileResponse("static/index.html")
 
 # Add CORS middleware to the app
 app.add_middleware(
